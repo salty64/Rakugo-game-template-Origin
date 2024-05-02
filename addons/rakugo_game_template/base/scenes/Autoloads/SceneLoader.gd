@@ -88,6 +88,7 @@ func load_scene_in_background(scene_path : String):
 func change_scene(scene_path : String, wait_after_load : bool = true) -> void:
 	if scene_path == null or scene_path.is_empty():
 		push_error("no path given to load")
+		return
 	_scene_path = scene_path
 	_scene_loading_complete = false
 	_wait_after_load = wait_after_load
@@ -96,17 +97,17 @@ func change_scene(scene_path : String, wait_after_load : bool = true) -> void:
 		call_deferred("emit_signal", "scene_loaded")
 		if _wait_after_load:
 			change_scene_to_loading_screen()
+			set_process(true)
 			return
 		change_scene_to_resource()
 		return
-	change_scene_to_loading_screen()
 	ResourceLoader.load_threaded_request(_scene_path)
+	change_scene_to_loading_screen()
 	set_process(true)
 
 func _ready():
 	set_process(false)
-	set_loading_screen(ProjectSettings.get_setting("addons/rakugo_game_template/loading_scene_path"))
-	change_scene(ProjectSettings.get_setting("addons/rakugo_game_template/first_scene_to_load_path"))
+	set_loading_screen(ProjectSettings.get_setting(RakugoGameTemplate.loading_scene_setting_path))
 
 func _process(_delta):
 	if not _scene_loading_complete:
