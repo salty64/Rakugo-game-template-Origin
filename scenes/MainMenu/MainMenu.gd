@@ -48,18 +48,13 @@ func _event_skips_intro(event : InputEvent):
 		event.is_action_released("ui_cancel") or \
 		_event_is_mouse_button_released(event)
 
-func _input(event):
-	if event.is_action_released("ui_accept") and get_viewport().gui_get_focus_owner() == null:
-		%MenuButtons.focus_first()
-
 func _ready():
 	if OS.has_feature("web"):
 		%ExitButton.hide()
 	else:
 		confirm_popup.get_ok_button().pressed.connect(_on_exit_confirmed)
 		
-	AppLog.version_opened(version_number)
-	$"%VersionNumber".text = "version : %s" % version_number
+	%VersionNumber.text = "version : %s" % version_number
 	
 	if Template_position=="Right" :
 		header_margin.size_flags_horizontal  = SIZE_SHRINK_END
@@ -72,6 +67,8 @@ func _ready():
 	
 	if ProjectSettings.get_setting(RakugoGameTemplate.loading_scene_setting_path).is_empty():
 		play_button.hide()
+	else:
+		play_button.grab_focus()
 
 func _on_play_button_pressed():
 	SceneLoader.change_scene(ProjectSettings.get_setting(RakugoGameTemplate.first_game_scene_setting_path))
